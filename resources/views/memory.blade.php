@@ -35,21 +35,22 @@
         h1{margin:6px 0 8px;font-size:24px;color:#333}
         p.lead{margin:0 0 14px;color:#555}
 
-        .top-row{
+        /* .top-row{
             display:flex;
             gap:10px;
             align-items:center;
             justify-content:space-between;
             margin-bottom:14px;
             flex-wrap:wrap;
-        }
-        .stats {
+        } */
+        
+        /* .stats {
             display:flex;
             gap:12px;
             align-items:center;
             color:#333;
             font-weight:600;
-        }
+        } */
 
         .btn{
             background:#00d4ff;
@@ -107,7 +108,7 @@
         }
 
         .front {
-            background: linear-gradient(135deg,#fff,#f1f7ff);
+            background: linear-gradient(135deg,#a56767,#797a4b);
             color:#333;
             transform: rotateY(180deg);
             border: 3px solid #fff;
@@ -145,17 +146,15 @@
     <div class="container">
         <h1>🧠 Memory Matching Game</h1>
         <p class="lead">Find all matching pairs. Good luck!</p>
-
-        <div class="top-row">
-            <div class="stats">
+        
+            {{-- <div class="stats">
                 <div>Tries: <span id="tries">0</span></div>
                 <div>Matches: <span id="matches">0</span>/<span id="totalPairs">0</span></div>
-            </div>
+            </div> --}}
 
             <div>
                 <button class="btn" id="resetBtn">Restart</button>
             </div>
-        </div>
 
         <div class="board" id="board"></div>
 
@@ -164,7 +163,7 @@
 
     <script>
         // ----- GAME SETTINGS -----
-        const pairs = 6; // number of pairs (change to 6 or 8)
+        const pairs = 6; // number of pairs
         
         const IMAGES = [
             "/images/1.png",
@@ -175,22 +174,44 @@
             "/images/6.png"
         ];
 
+        const sounds = {
+            flip: new Audio('/sounds/flip.mp3'),
+            match: new Audio('/sounds/match.mp3'),
+            win: new Audio('/sounds/win.mp3')
+        };
+
+        // const bgm = new Audio('/sounds/bgm.mp3');
+        // bgm.loop = true;     // repeat forever
+        // bgm.volume = 0.4;   // 0.0 – 1.0
+
+
+        // let bgmStarted = false;
+
+        // function startBGM() {
+        //     if (!bgmStarted) {
+        //         bgm.play().catch(() => {});
+        //         bgmStarted = true;
+        //     }
+        // }
+
+
+
         // ----- STATE -----
         let firstCard = null;
         let secondCard = null;
         let lockBoard = false;
-        let tries = 0;
+        //let tries = 0;
         let matches = 0;
         let totalPairs = pairs;
 
         const board = document.getElementById('board');
-        const triesEl = document.getElementById('tries');
-        const matchesEl = document.getElementById('matches');
-        const totalPairsEl = document.getElementById('totalPairs');
+        // const triesEl = document.getElementById('tries');
+        // const matchesEl = document.getElementById('matches');
+        // const totalPairsEl = document.getElementById('totalPairs');
         const messageEl = document.getElementById('message');
         const resetBtn = document.getElementById('resetBtn');
 
-        totalPairsEl.textContent = totalPairs;
+        // totalPairsEl.textContent = totalPairs;
 
         // Fisher-Yates shuffle
         function shuffle(array) {
@@ -216,10 +237,10 @@
             firstCard = null;
             secondCard = null;
             lockBoard = false;
-            tries = 0;
+            //tries = 0;
             matches = 0;
-            triesEl.textContent = tries;
-            matchesEl.textContent = matches;
+            // triesEl.textContent = tries;
+            // matchesEl.textContent = matches;
             messageEl.textContent = '';
 
             // adjust grid columns for even layout
@@ -263,11 +284,13 @@
 
         // Card click handler
         function onCardClick(e) {
+            // startBGM();
             if (lockBoard) return;
             const card = e.currentTarget;
             if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
 
             card.classList.add('flipped');
+            playSound(sounds.flip);
 
             if (!firstCard) {
                 firstCard = card;
@@ -276,16 +299,19 @@
 
             secondCard = card;
             lockBoard = true;
-            tries++;
-            triesEl.textContent = tries;
+            //tries++;
+            // triesEl.textContent = tries;
 
             // check match
             if (firstCard.dataset.value === secondCard.dataset.value) {
+                playSound(sounds.match);
                 // matched
+                
                 firstCard.classList.add('matched');
                 secondCard.classList.add('matched');
                 matches++;
-                matchesEl.textContent = matches;
+                
+                //matchesEl.textContent = matches;
                 // reset selections
                 firstCard = null;
                 secondCard = null;
@@ -293,6 +319,7 @@
 
                 // win check
                 if (matches === totalPairs) {
+                    playSound(sounds.win);
                     messageEl.textContent = "🎉 You won! Great job!";
                 }
             } else {
@@ -307,8 +334,16 @@
             }
         }
 
+        function playSound(sound) {
+            sound.currentTime = 0;
+            sound.play().catch(() => {});
+        }
+
+        
+
         // Restart game
         resetBtn.addEventListener('click', () => {
+            playSound(sounds.flip);
             renderBoard();
         });
 
