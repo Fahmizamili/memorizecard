@@ -144,7 +144,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🧠 Memory Matching Game</h1>
+        <h1>Memory Matching Game</h1>
         <p class="lead">Find all matching pairs. Good luck!</p>
         
             {{-- <div class="stats">
@@ -260,7 +260,7 @@
 
                 const back = document.createElement('div');
                 back.className = 'face back';
-                back.textContent = '❓';
+                back.textContent = '?';
 
                 const front = document.createElement('div');
                 front.className = 'face front';
@@ -320,7 +320,7 @@
                 // win check
                 if (matches === totalPairs) {
                     playSound(sounds.win);
-                    messageEl.textContent = "🎉 You won! Great job!";
+                    messageEl.textContent = "You won! Great job!";
                 }
             } else {
                 // not match -> flip back after delay
